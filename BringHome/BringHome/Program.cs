@@ -37,6 +37,6 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Roster}/{action=Index}/{id?}");
+    pattern: "{controller=Karyawan}/{action=Index}/{id?}");
 
 app.Run();
