@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<BringHome.Models.tbl_r_dept>
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -312,3 +313,66 @@
 </div>
 
 
+
+
+@section scripts {
+    <script src="~/js/vendor/jquery-2.2.4.min.js"></script>
+    <script>
+        var link = '@Url.Action("Function", "Controller")'
+        var controller_name = "@ViewBag.Controller"
+        var a
+        var dataTable
+
+        $(document).ready(function () {
+            getCredentials()
+            getData()
+        })
+
+        function getCredentials() {
+            //GetNRP
+            $('#insert_by').val("@Html.Raw(ViewBag.insert_by)")
+        }
+
+        function getData() {
+            link = link.replace("Controller", "Setting");
+            link = link.replace("Function", "Get");
+
+            $.ajax({
+                type: "GET",
+                url: link,
+                success: function (data) {
+                    if (data.status) {
+                        $('#id').val(data.data.id)
+                        $('#nama').val(data.data.nama)
+                        $('#description').val(data.data.description)
+                        $('#icon').val(data.data.icon)
+                        $('#theme').val(data.data.theme)
+                    } else {
+                        alert(data.data)
+                    }
+                }
+            })
+            link = '@Url.Action("Function", "Controller")'
+        }
+
+        function updateData(id) {
+            link = link.replace("Controller", "Setting");
+            link = link.replace("Function", "Update");
+
+            $.ajax({
+                type: "POST",
+                url: link,
+                data: $('#formBS').serialize(),
+                success: function (data) {
+                    if (data.status) {
+                        alertify.notify('Data berhasil diubah', 'success', 5)
+                        location.reload()
+                    } else {
+                        alert(data.data)
+                    }
+                }
+            })
+            link = '@Url.Action("Function", "Controller")'
+        }
+    </script>
+}

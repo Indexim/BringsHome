@@ -18,7 +18,8 @@ namespace BringHome.DBContext
         public DbSet<Roster> roster_karyawan { get; set; }
         public DbSet<vw_t_user_kategori> vw_t_user_kategori { get; set; }
 
-        public DbSet<tbl_r_dept> tbl_r_dept { get; set; } // Added DbSet for tbl_r_dept
+      //  public DbSet<tbl_m_karyawan> tbl_m_karyawan { get; set; }
+        public DbSet<tbl_r_dept> tbl_r_dept { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
