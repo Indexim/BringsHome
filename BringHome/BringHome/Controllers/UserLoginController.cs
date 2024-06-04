@@ -1,22 +1,21 @@
-﻿using BringHome.DBContext;
-using BringHome.Models;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using BringHome.DBContext;
+using BringHome.Models;
 namespace BringHome.Controllers
 {
-    public class MenuController : Controller
+    public class UserLoginController : Controller
     {
-        private AppDBContext _context;
-        private string controller_name => "Menu";
-        private string title_name => "Menu";
-
-        public MenuController(AppDBContext context)
+        private  AppDBContext _context;
+        private  string controller_name => "UserLogin";
+        private  string title_name => "UserLogin";
+        public UserLoginController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: Departemen
         public ActionResult Index()
         {
             if (HttpContext.Session.GetString("is_login") == null)
@@ -57,9 +56,6 @@ namespace BringHome.Controllers
                         .OrderBy(x => x.title)
                         .Count();
                     ViewBag.insert_by = HttpContext.Session.GetString("nrp");
-
-                    // Menambahkan link action ke ViewBag
-                    ViewBag.FunctionLink = Url.Action("Function", "Controller");
                     return View();
                 }
                 else
@@ -69,14 +65,11 @@ namespace BringHome.Controllers
             }
         }
 
-
-
-        // GET: Menu/GetAll
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var results = await _context.tbl_r_menu.OrderBy(x => x.type).ToListAsync();
+                var results = await _context.tbl_m_user_login.OrderBy(x => x.nrp).ToListAsync();
                 return Json(new { status = true, remarks = "Sukses", data = results });
             }
             catch (Exception e)
@@ -85,18 +78,15 @@ namespace BringHome.Controllers
             }
         }
 
-
-        // GET: Menu/Get/{id}
         public async Task<IActionResult> Get(int id)
         {
             try
             {
-                var result = await _context.tbl_r_menu.FirstOrDefaultAsync(x => x.id == id);
+                var result = await _context.tbl_m_user_login.FirstOrDefaultAsync(x => x.id == id);
                 if (result == null)
                 {
-                    return Json(new { status = false, remarks = "Menu tidak ditemukan" });
+                    return Json(new { status = false, remarks = "Data tidak ditemukan" });
                 }
-
                 return Json(new { status = true, remarks = "Sukses", data = result });
             }
             catch (Exception e)
@@ -105,16 +95,15 @@ namespace BringHome.Controllers
             }
         }
 
-        // POST: Menu/Insert
         [HttpPost]
-        public async Task<IActionResult> Insert(tbl_r_menu a)
+        public async Task<IActionResult> Insert(tbl_m_user_login a)
         {
             try
             {
                 a.ip = System.Environment.MachineName;
-                //  a.created_at = DateTime.Now;
+             //   a.created_at = DateTime.Now;
 
-                _context.tbl_r_menu.Add(a);
+                _context.tbl_m_user_login.Add(a);
                 await _context.SaveChangesAsync();
 
                 return Json(new { status = true, remarks = "Sukses" });
@@ -125,52 +114,50 @@ namespace BringHome.Controllers
             }
         }
 
-        // POST: Menu/Update
         [HttpPost]
-        public async Task<IActionResult> Update(tbl_r_menu a)
+        public async Task<IActionResult> Update(tbl_m_user_login a)
         {
             try
             {
-                var tbl_ = await _context.tbl_r_menu.FirstOrDefaultAsync(x => x.id == a.id);
+                var tbl_ = await _context.tbl_m_user_login.FirstOrDefaultAsync(x => x.id == a.id);
                 if (tbl_ != null)
                 {
                     tbl_.kategori_user_id = a.kategori_user_id;
-                    tbl_.type = a.type;
-                    tbl_.title = a.title;
-                    tbl_.link_controller = a.link_controller;
-                    tbl_.link_function = a.link_function;
-                    tbl_.hidden = a.hidden;
-                    tbl_.new_tab = a.new_tab;
-                    tbl_.insert_by = a.insert_by;
+                    tbl_.nrp = a.nrp;
+                    tbl_.password = a.password;
+                    tbl_.fullname = a.fullname;
+                    tbl_.dept_code = a.dept_code;
+                    tbl_.created_by = a.created_by;
                     tbl_.ip = System.Environment.MachineName;
-                    //  tbl_.updated_at = DateTime.Now;
+                   // tbl_.updated_at = DateTime.Now;
 
+                    _context.tbl_m_user_login.Update(tbl_);
                     await _context.SaveChangesAsync();
+
                     return Json(new { status = true, remarks = "Sukses" });
                 }
-
-                return Json(new { status = false, remarks = "Menu tidak ditemukan" });
+                return Json(new { status = false, remarks = "Data tidak ditemukan" });
             }
             catch (Exception e)
             {
                 return Json(new { status = false, remarks = "Gagal", data = e.Message });
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var tbl_ = await _context.tbl_r_menu.FirstOrDefaultAsync(x => x.id == id);
+                var tbl_ = await _context.tbl_m_user_login.FirstOrDefaultAsync(f => f.id == id);
                 if (tbl_ != null)
                 {
-                    _context.tbl_r_menu.Remove(tbl_);
+                    _context.tbl_m_user_login.Remove(tbl_);
                     await _context.SaveChangesAsync();
 
                     return Json(new { status = true, remarks = "Sukses" });
                 }
-
-                return Json(new { status = false, remarks = "Menu tidak ditemukan" });
+                return Json(new { status = false, remarks = "Data tidak ditemukan" });
             }
             catch (Exception e)
             {

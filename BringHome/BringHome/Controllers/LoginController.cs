@@ -7,13 +7,17 @@ namespace BringHome.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly AppDBContext _db;
+        private  AppDBContext _db;
 
         public LoginController(AppDBContext context)
         {
             _db = context;
         }
-
+        public ActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Login");
+        }
         public IActionResult Index()
         {
             if (HttpContext.Session.GetString("is_login") != null)
@@ -29,56 +33,49 @@ namespace BringHome.Controllers
                 return View();
             }
         }
-
         [HttpPost]
-        public ActionResult ProsesLogin(string nrp, string password, string ip)
+        public ActionResult ProsesLogin(string nrp, string password)
         {
             try
             {
-                // Cari pengguna berdasarkan NRP dan kata sandi dari database
-                var user = _db.tbl_m_user_login.FirstOrDefault(x => x.nrp == nrp && x.password == password);
+                // Cek keberadaan NRP di tbl user login
+                var userLogin = _db.tbl_m_user_login.FirstOrDefault(x => x.nrp == nrp && x.password == password);
 
-                if (user != null)
+                if (userLogin != null)
                 {
-                    // Data pengguna ditemukan, set session dan kirimkan respons
                     HttpContext.Session.SetString("is_login", "true");
-                    HttpContext.Session.SetString("nrp", user.nrp);
-                    HttpContext.Session.SetString("nama", user.fullname);
-                    HttpContext.Session.SetString("dept", user.dept_code);
-                    HttpContext.Session.SetString("ip", ip);
+                    HttpContext.Session.SetString("nrp", userLogin.nrp);
+                    HttpContext.Session.SetString("nama", userLogin.fullname);
+                    HttpContext.Session.SetString("dept", userLogin.dept_code);
 
-                    // Ambil kategori pengguna dari database
-                    var kategori_user = _db.vw_t_user_kategori.Where(x => x.nrp == user.nrp).ToList();
 
-                    return Json(new { status = true, remarks = "Login Sukses: " + user.nrp, data = kategori_user });
+                    var kategoriUser = _db.tbl_m_user_login.Where(x => x.nrp == userLogin.nrp).ToList();
+
+                    return Json(new { status = true, remarks = "Login Sukses: " + userLogin.kategori_user_id, data = kategoriUser });
                 }
                 else
                 {
-                    // Data pengguna tidak ditemukan, kirimkan pesan kesalahan
                     return Json(new { status = false, remarks = "Login gagal. Username/password salah" });
                 }
             }
             catch (Exception ex)
             {
-                // Tangani kesalahan jika terjadi
                 return Json(new { status = false, remarks = "Gagal", data = ex.Message });
             }
         }
 
-
-
         [HttpGet]
-        public IActionResult CekKategoriUser(string kategori_user_id)
+        public ActionResult CekKategoriUser(string kategori_user_id)
         {
             try
             {
-                var results = _db.tbl_r_kategori_user.FirstOrDefault(x => x.kategori == kategori_user_id);
-                HttpContext.Session.SetString("kategori_user_id", results.kategori);
-                return Json(new { status = true, remarks = "Sukses", data = results });
+                var result = _db.tbl_r_kategori_user.FirstOrDefault(x => x.kategori == kategori_user_id);
+                HttpContext.Session.SetString("kategori_user_id", result.kategori);
+                return Json(new { status = true, remarks = "Sukses", data = result });
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                return Json(new { status = false, remarks = "Gagal", data = e.Message });
+                return Json(new { status = false, remarks = "Gagal", data = ex.Message });
             }
         }
     }

@@ -7,7 +7,7 @@ namespace BringHome.Controllers
 {
     public class RosterController : Controller
     {
-        private readonly AppDBContext _db;
+        private  AppDBContext _db;
 
         public RosterController(AppDBContext context)
         {
