@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BringHome.Controllers
 {
-    public class MenuController : Controller
+    public class KategoriUserController : Controller
     {
-        private AppDBContext _context;
-        private string controller_name => "Menu";
-        private string title_name => "Menu";
+        private  AppDBContext _context;
+        private  string controller_name => "KategoriUser";
+        private  string title_name => "KategoriUser";
 
-        public MenuController(AppDBContext context)
+        public KategoriUserController(AppDBContext context)
         {
             _context = context;
         }
 
-        // GET: Departemen
+
         public ActionResult Index()
         {
             if (HttpContext.Session.GetString("is_login") == null)
@@ -57,9 +57,6 @@ namespace BringHome.Controllers
                         .OrderBy(x => x.title)
                         .Count();
                     ViewBag.insert_by = HttpContext.Session.GetString("nrp");
-
-                    // Menambahkan link action ke ViewBag
-                    ViewBag.FunctionLink = Url.Action("Function", "Controller");
                     return View();
                 }
                 else
@@ -69,14 +66,11 @@ namespace BringHome.Controllers
             }
         }
 
-
-
-        // GET: Menu/GetAll
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var results = await _context.tbl_r_menu.OrderBy(x => x.type).ToListAsync();
+                var results = await _context.tbl_r_kategori_user.OrderBy(x => x.kategori).ToListAsync();
                 return Json(new { status = true, remarks = "Sukses", data = results });
             }
             catch (Exception e)
@@ -85,16 +79,15 @@ namespace BringHome.Controllers
             }
         }
 
-
-        // GET: Menu/Get/{id}
+        // GET: KategoriUser/Get/5
         public async Task<IActionResult> Get(int id)
         {
             try
             {
-                var result = await _context.tbl_r_menu.FirstOrDefaultAsync(x => x.id == id);
+                var result = await _context.tbl_r_kategori_user.FirstOrDefaultAsync(x => x.id == id);
                 if (result == null)
                 {
-                    return Json(new { status = false, remarks = "Menu tidak ditemukan" });
+                    return Json(new { status = false, remarks = "Kategori tidak ditemukan" });
                 }
 
                 return Json(new { status = true, remarks = "Sukses", data = result });
@@ -105,18 +98,16 @@ namespace BringHome.Controllers
             }
         }
 
-        // POST: Menu/Insert
+        // POST: KategoriUser/Insert
         [HttpPost]
-        public async Task<IActionResult> Insert(tbl_r_menu a)
+        public async Task<IActionResult> Insert(tbl_r_kategori_user a)
         {
             try
             {
                 a.ip = System.Environment.MachineName;
-                //  a.created_at = DateTime.Now;
-
-                _context.tbl_r_menu.Add(a);
+                //a.created_at = DateTime.Now;
+                _context.tbl_r_kategori_user.Add(a);
                 await _context.SaveChangesAsync();
-
                 return Json(new { status = true, remarks = "Sukses" });
             }
             catch (Exception e)
@@ -125,52 +116,52 @@ namespace BringHome.Controllers
             }
         }
 
-        // POST: Menu/Update
+        // POST: KategoriUser/Update
         [HttpPost]
-        public async Task<IActionResult> Update(tbl_r_menu a)
+        public async Task<IActionResult> Update(tbl_r_kategori_user a)
         {
             try
             {
-                var tbl_ = await _context.tbl_r_menu.FirstOrDefaultAsync(x => x.id == a.id);
-                if (tbl_ != null)
+                var existingRecord = await _context.tbl_r_kategori_user.FirstOrDefaultAsync(f => f.id == a.id);
+                if (existingRecord != null)
                 {
-                    tbl_.kategori_user_id = a.kategori_user_id;
-                    tbl_.type = a.type;
-                    tbl_.title = a.title;
-                    tbl_.link_controller = a.link_controller;
-                    tbl_.link_function = a.link_function;
-                    tbl_.hidden = a.hidden;
-                    tbl_.new_tab = a.new_tab;
-                    tbl_.insert_by = a.insert_by;
-                    tbl_.ip = System.Environment.MachineName;
-                    //  tbl_.updated_at = DateTime.Now;
-
+                    existingRecord.kategori = a.kategori;
+                    existingRecord.login_controller = a.login_controller;
+                    existingRecord.login_function = a.login_function;
+                    existingRecord.insert_by = a.insert_by;
+                    existingRecord.ip = System.Environment.MachineName;
+                   // existingRecord.updated_at = DateTime.Now;
                     await _context.SaveChangesAsync();
                     return Json(new { status = true, remarks = "Sukses" });
                 }
-
-                return Json(new { status = false, remarks = "Menu tidak ditemukan" });
+                else
+                {
+                    return Json(new { status = false, remarks = "Data tidak ditemukan" });
+                }
             }
             catch (Exception e)
             {
                 return Json(new { status = false, remarks = "Gagal", data = e.Message });
             }
         }
+
+        // POST: KategoriUser/Delete
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var tbl_ = await _context.tbl_r_menu.FirstOrDefaultAsync(x => x.id == id);
-                if (tbl_ != null)
+                var existingRecord = await _context.tbl_r_kategori_user.FirstOrDefaultAsync(f => f.id == id);
+                if (existingRecord != null)
                 {
-                    _context.tbl_r_menu.Remove(tbl_);
+                    _context.tbl_r_kategori_user.Remove(existingRecord);
                     await _context.SaveChangesAsync();
-
                     return Json(new { status = true, remarks = "Sukses" });
                 }
-
-                return Json(new { status = false, remarks = "Menu tidak ditemukan" });
+                else
+                {
+                    return Json(new { status = false, remarks = "Data tidak ditemukan" });
+                }
             }
             catch (Exception e)
             {

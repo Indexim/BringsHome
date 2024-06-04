@@ -53,12 +53,7 @@
     </div>
 </div>
 
-@section scripts {
-    <!-- jQuery, Bootstrap, jQuery plugins and Custom JS code -->
-    <script src="~/js/vendor/jquery-2.2.4.min.js"></script>
-    <script src="~/js/vendor/bootstrap.min.js"></script>
-    <script src="~/js/plugins.js"></script>
-    <script src="~/js/app.js"></script>
+
 <script>
     App.datatables();
     var link = '@Url.Action("Function", "Controller")';
@@ -71,7 +66,7 @@
     async function init() {
         await getList();
         await getRoster();
-
+        
         var xx = jeketek();
         console.log("==>", xx)
         await getAll();
@@ -87,9 +82,9 @@
         ];
 
         let dataRoster = [];
-
+        
         let tgl = getDaysInMonth(5, 2024);
-        console.log("--->", tgl);
+        console.log("--->",tgl);
 
         rosterListName.forEach(function (x, i) {
             console.log("nama:", x);
@@ -144,7 +139,7 @@
         console.log("cols:", cols)
 
         link = link.replace("Controller", "Roster");
-        console.log("link:", link)
+        console.log("link:",link)
         link = link.replace("Function", "Gets");
         console.log("link:", link)
 
@@ -210,4 +205,3 @@
         return [year, month, day].join('-');
     }
 </script>
-}

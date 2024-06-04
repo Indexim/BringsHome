@@ -1,23 +1,22 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using BringHome.DBContext;
+using BringHome.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BringHome.DBContext;
-using BringHome.Models;
 
 namespace BringHome.Controllers
 {
-    public class KaryawanController : Controller
-
+    public class SettingController : Controller
     {
+        private  AppDBContext _context;
+        private  string controller_name => "Setting";
+        private  string title_name => "Setting";
 
-        private AppDBContext _context;
-        private string controller_name => "Karyawan";
-        private string title_name => "Karyawan";
-        public KaryawanController(AppDBContext context)
+        public SettingController(AppDBContext context)
         {
             _context = context;
         }
+
+        // GET: Departemen
         public ActionResult Index()
         {
             if (HttpContext.Session.GetString("is_login") == null)
@@ -40,17 +39,17 @@ namespace BringHome.Controllers
                     ViewBag.Setting = _context.tbl_m_setting_aplikasi.FirstOrDefault();
                     ViewBag.Menu = _context.tbl_r_menu
                         .Where(x => x.kategori_user_id == HttpContext.Session.GetString("kategori_user_id"))
-                    .OrderBy(x => x.title)
+                        .OrderBy(x => x.title)
                         .ToList();
                     ViewBag.MenuPelanggaranCount = _context.tbl_r_menu
                         .Where(x => x.kategori_user_id == HttpContext.Session.GetString("kategori_user_id"))
                         .Where(x => x.type == "Pelanggaran")
-                    .OrderBy(x => x.title)
+                        .OrderBy(x => x.title)
                         .Count();
                     ViewBag.MenuMasterCount = _context.tbl_r_menu
                         .Where(x => x.kategori_user_id == HttpContext.Session.GetString("kategori_user_id"))
                         .Where(x => x.type == "Master")
-                    .OrderBy(x => x.title)
+                        .OrderBy(x => x.title)
                         .Count();
                     ViewBag.MenuTransaksiCount = _context.tbl_r_menu
                         .Where(x => x.kategori_user_id == HttpContext.Session.GetString("kategori_user_id"))
@@ -66,5 +65,48 @@ namespace BringHome.Controllers
                 }
             }
         }
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                var result = await _context.tbl_m_setting_aplikasi.FirstOrDefaultAsync();
+                if (result == null)
+                {
+                    return Json(new { status = false, remarks = "Data tidak ditemukan" });
+                }
+                return Json(new { status = true, remarks = "Sukses", data = result });
+            }
+            catch (Exception e)
+            {
+                return Json(new { status = false, remarks = "Gagal", data = e.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(tbl_m_setting_aplikasi a)
+        {
+            try
+            {
+                var tbl_ = await _context.tbl_m_setting_aplikasi.FirstOrDefaultAsync(f => f.id == a.id);
+                if (tbl_ != null)
+                {
+                    tbl_.id = a.id;
+                    tbl_.nama = a.nama;
+                    tbl_.description = a.description;
+                    tbl_.icon = a.icon;
+                    tbl_.theme = a.theme;
+                    tbl_.insert_by = a.insert_by;
+                    tbl_.ip = System.Environment.MachineName; // Menetapkan nilai ip dari objek a
+                  //  tbl_.updated_at = DateTime.Now; // Menetapkan nilai updated_at dari objek a
+                    await _context.SaveChangesAsync(); // Menyimpan perubahan ke database
+                }
+                return Json(new { status = true, remarks = "Sukses" });
+            }
+            catch (Exception e)
+            {
+                return Json(new { status = false, remarks = "Gagal", data = e.Message });
+            }
+        }
+
+
     }
 }
