@@ -14,14 +14,17 @@ namespace BringHome.DBContext
         public DbSet<tbl_m_user_login> tbl_m_user_login { get; set; }
         public DbSet<tbl_r_kategori_user> tbl_r_kategori_user { get; set; }
         public DbSet<tbl_m_setting_aplikasi> tbl_m_setting_aplikasi { get; set; }
-        public DbSet<Roster> roster_karyawan { get; set; }
+        public DbSet<RosterKaryawanView> vw_roster_karyawan { get; set; }
         public DbSet<vw_t_user_kategori> vw_t_user_kategori { get; set; }
         public DbSet<tbl_r_dept> tbl_r_dept { get; set; } // Added DbSet for tbl_r_dept
+
+        public DbSet<Roster> roster_karyawan { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Konfigurasi entitas yang tidak memiliki kunci utama (keyless entity)
             modelBuilder.Entity<vw_t_user_kategori>().HasNoKey();
+            modelBuilder.Entity<RosterKaryawanView>().HasNoKey();
 
             // Optionally configure tbl_r_dept if needed
             // Example: Configure table name and primary key
