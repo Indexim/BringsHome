@@ -29,7 +29,6 @@
                 <h2>Konfigurasi Roster</h2>
             </div>
             <!-- END General Elements Title -->
-
             <!-- General Elements Content -->
             <form action="page_forms_components.html" method="post" enctype="multipart/form-data" class="form-horizontal form-bordered" onsubmit="return false;">
                 <div class="form-group col-form-label-sm">
@@ -64,7 +63,13 @@
     </div>
 </div>
 <!-- END FullCalendar Block -->
-
 <!-- Load and execute javascript code used only in this page -->
-<script src="~/js/pages/compCalendar.js"></script>
-<script>$(function () { CompCalendar.init(); });</script>
+@section scripts {
+    <!-- jQuery, Bootstrap, jQuery plugins and Custom JS code -->
+    <script src="~/js/vendor/jquery-2.2.4.min.js"></script>
+    <script src="~/js/vendor/bootstrap.min.js"></script>
+    <script src="~/js/plugins.js"></script>
+    <script src="~/js/app.js"></script>
+    <script src="~/js/pages/compCalendar.js"></script>
+    <script>$(function () { CompCalendar.init(); });</script>
+}

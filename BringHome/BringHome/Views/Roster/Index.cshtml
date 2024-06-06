@@ -1,5 +1,4 @@
-﻿@model IEnumerable<BringHome.Models.tbl_r_dept>
-@{
+﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -61,72 +60,52 @@
     <script src="~/js/app.js"></script>
 <script>
     App.datatables();
-    var link = '@Url.Action("Function", "Controller")';
-    var rosterListName = [], rosterList = [];
+    var rosterListName = [], rosterList = [], tgl = [];
 
     $(document).ready(function () {
         init();
     });
 
     async function init() {
+        tgl = await getDaysInMonth(5, 2024);
         await getList();
         await getRoster();
-
-        var xx = jeketek();
-        console.log("==>", xx)
         await getAll();
     }
 
     var getAll = async () => {
-        console.log("rosterListName:", rosterListName);
-        console.log("rosterList:", rosterList);
         let cols = [
             { "title": "NIK", "data": "nik" },
             { "title": "NAMA", "data": "nama", "width": 120 },
             { "title": "JABATAN", "data": "jabatan", "width": 140 },
         ];
 
-        let dataRoster = [];
-
-        let tgl = getDaysInMonth(5, 2024);
-        console.log("--->", tgl);
+        let dataRoster = [], isGen;
+        
 
         rosterListName.forEach(function (x, i) {
-            console.log("nama:", x);
             dataRoster.push({
                 "nik": x.nik,
                 "nama": x.nama,
                 "jabatan": x.jabatan
             });
-            tgl.forEach(function (dt) {
-                //let dtFormat = new Date(dt).toISOString().split('T')[0];
+            tgl.forEach(function (dt, j) {
                 let dtFormat = formatDate(new Date(dt));
-                // console.log("dtFormat:", dtFormat);
-                // let rost = rosterList.find((f) => f.tanggal.split('T')[0] == dtFormat);
-                // console.log("rost:", rost)
-
-                rosterList.forEach((o) => {
-                    if (o.nik == x.nik) {
-                        if (o.tanggal.split('T')[0] == dtFormat) {
-                            console.log("ada:", i);
-                            console.log("====>>", o.tanggal.split('T')[0], dtFormat, o.tanggal.split('T')[0] == dtFormat, o)
-                            dataRoster[i][o.tanggal.split('T')[0]] = o.status ?? "-";
-                        }
-                    }
-                })
+                let getRoster = rosterList.find(f => f.nik == x.nik && f.tanggal.split('T')[0] == dtFormat);
+                if (getRoster) {
+                    //dataRoster[i][getRoster] = "";
+                    dataRoster[i][dtFormat] = getRoster.status;
+                } else {
+                    dataRoster[i][dtFormat] = "-";
+                }
             });
-        })
+        });
 
-        // generate columns
-        console.log("dataRoster:", dataRoster)
+
+        // generate columns        
         tgl.forEach(function (x) {
-            // console.log("--->>", new Date(x).toISOString().split('T')[0])
             let dateCol = formatDate(new Date(x));
-            //dateCol.setDate(dateCol.getDate() + 1)
-            cols.push({
-                "title": x.getDate().toString(),
-                "data": dateCol//dateCol.toISOString().split('T')[0]
-            })
+            cols.push({ "title": x.getDate().toString(), "data": dateCol })
         });
 
         cols.push({
@@ -139,21 +118,9 @@
             "orderable": false,
             "width": "180px",
             "searchable": false
-        })
-
-        console.log("cols:", cols)
-
-        link = link.replace("Controller", "Roster");
-        console.log("link:", link)
-        link = link.replace("Function", "Gets");
-        console.log("link:", link)
+        });
 
         dataTable = $("#table-roster").DataTable({
-            /*"ajax": {
-                "url": "@Url.Action("Gets", "Roster")",
-                "type": "GET",
-                "datatype": "json"
-            },*/
             "data": dataRoster,
             "columns": cols,
             "language": {
@@ -163,6 +130,16 @@
                 "start": 1,
                 "end": 1
             },
+            "rowCallback": function (row, data, index, col) {
+                tgl.forEach((obj) => {
+                    let dateFormat = formatDate(new Date(obj));
+                    console.log("-----");
+                    console.log("col:", dateFormat, data['2024-06-01']);
+                    if (data[dateFormat] == 'RR') {
+                        $(row).find('td').css('color', 'red');
+                    }
+                })
+            }
         })
     }
 
