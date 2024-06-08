@@ -76,21 +76,6 @@ var CompCalendar = function() {
                         //url: 'http://twitter.com/pixelcave'
                     },
                 ],
-                dayRender: function (date, cell) {
-
-                    var today = new Date();
-                    var end = new Date();
-                    end.setDate(today.getDate() + 7);
-
-                    if (date.getDate() === today.getDate()) {
-                        cell.css("background-color", "red");
-                    }
-
-                    if (date > today && date <= end) {
-                        cell.css("background-color", "yellow");
-                    }
-
-                }   
             });
         }
     };
