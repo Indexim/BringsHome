@@ -10,10 +10,12 @@ namespace BringHome.Controllers
         private readonly AppDBContext _db;
         private string controller_name => "Roster";
         private string title_name => "Roster Karyawan";
+        private IConfiguration _configuration;
 
-        public RosterController(AppDBContext context)
+        public RosterController(AppDBContext context, IConfiguration configuration)
         {
             _db = context;
+            _configuration = configuration;
         }
 
         public ActionResult Index()
@@ -151,6 +153,10 @@ namespace BringHome.Controllers
                         .OrderBy(x => x.title)
                         .Count();
                     ViewBag.insert_by = HttpContext.Session.GetString("nrp");
+                    ViewBag.MasaOnsite = _configuration["RoleRoster:MasaOnsite"];
+                    ViewBag.MasaCuti = _configuration["RoleRoster:MasaCuti"]; ;
+                    ViewBag.JmlKerja = _configuration["RoleRoster:PolaKerja:Masuk"];
+                    ViewBag.JmlLibur = _configuration["RoleRoster:PolaKerja:Libur"]; ;
                     return View();
                 }
                 else

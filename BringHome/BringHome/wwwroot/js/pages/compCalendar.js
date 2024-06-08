@@ -47,17 +47,19 @@ var CompCalendar = function() {
                 events: [
                     {
                         title: 'DINAS',
-                        start: new Date(y, m, 24),
-                        end: new Date(y, m, 27),
+                        start: new Date(y, m, 3),
+                        end: new Date(y, m, 6),
                         allDay: true,
-                        color: '#228B22'
+                        color: '#7fffd4',
+                        rendering: 'background'
                     },
                     {
                         title: 'ROSTER',
-                        start: new Date(y, m, 24),
-                        end: new Date(y, m, 27),
+                        start: new Date(y, m, 14),
+                        end: new Date(y, m, 14),
                         allDay: true,
-                        color: '#A52A2A'
+                        color: '#7fffd4',
+                        rendering: 'background'
                     },
                     {
                         title: 'OFF',
@@ -72,8 +74,23 @@ var CompCalendar = function() {
                         end: new Date(y, m, 23),
                         allDay: true,
                         //url: 'http://twitter.com/pixelcave'
+                    },
+                ],
+                dayRender: function (date, cell) {
+
+                    var today = new Date();
+                    var end = new Date();
+                    end.setDate(today.getDate() + 7);
+
+                    if (date.getDate() === today.getDate()) {
+                        cell.css("background-color", "red");
                     }
-                ]
+
+                    if (date > today && date <= end) {
+                        cell.css("background-color", "yellow");
+                    }
+
+                }   
             });
         }
     };
