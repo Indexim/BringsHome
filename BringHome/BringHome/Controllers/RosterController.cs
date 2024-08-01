@@ -156,7 +156,7 @@ namespace BringHome.Controllers
                     ViewBag.MasaOnsite = _configuration["RoleRoster:MasaOnsite"];
                     ViewBag.MasaCuti = _configuration["RoleRoster:MasaCuti"]; ;
                     ViewBag.JmlKerja = _configuration["RoleRoster:PolaKerja:Masuk"];
-                    ViewBag.JmlLibur = _configuration["RoleRoster:PolaKerja:Libur"]; ;
+                    ViewBag.JmlLibur = _configuration["RoleRoster:PolaKerja:Libur"];
                     return View();
                 }
                 else
